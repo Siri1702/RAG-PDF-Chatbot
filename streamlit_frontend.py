@@ -30,7 +30,6 @@ if st.button("Ask with Streaming"):
         st.session_state.chat_history.append({"role": "user", "content": question})
         with st.chat_message("user"):
             st.markdown(question)
-            st.markdown("---")
 
         response = requests.post(f"{API_URL}/ask_question_stream/", json={"question": question}, stream=True)
         if response.status_code == 200:
@@ -60,4 +59,5 @@ for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
         st.markdown("---")
+
 
