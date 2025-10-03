@@ -23,6 +23,8 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain_community.chat_models import ChatOllama
 from langchain.retrievers.multi_query import MultiQueryRetriever
+from fastapi.responses import StreamingResponse
+import asyncio
 
 retriever = None
 qa_chain = None
@@ -124,6 +126,22 @@ async def ask_question(req: QuestionRequest):
 
     result = qa_chain.invoke(req.question)
     return {"answer": result}
+
+@app.post("/ask_question_stream/")
+async def ask_question_stream(req: QuestionRequest):
+   global qa_chain
+   if qa_chain is None:
+       return StreamingResponse(iter(["Please upload a PDF first."]), media_type="text/plain")
+
+
+   async def generate():
+      result = qa_chain.invoke(req.question)
+      for token in list(result):
+            yield token
+            await asyncio.sleep(0.02) # simulate token-level delay
+
+
+   return StreamingResponse(generate(), media_type="text/plain")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
