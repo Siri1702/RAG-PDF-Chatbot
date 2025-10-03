@@ -1,0 +1,13 @@
+streamlit
+requests
+chromadb
+sentence-transformers
+huggingface-hub
+fastapi
+uvicorn[standard]
+pydantic
+langchain
+langchain-community
+langchain-ollama
+langchain-core
+python-multipart
