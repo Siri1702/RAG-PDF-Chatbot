@@ -1,5 +1,6 @@
 RAG-PDF Chatbot
 
+
 An open-source Retrieval-Augmented Generation (RAG) chatbot that lets you chat with PDFs.
 Upload any PDF and get context-aware, token-streamed answers with citations powered by Ollama LLMs, HuggingFace embeddings, and advanced retrieval techniques like multi-query retriever and contextual compression retriever for higher accuracy and reduced hallucination.
 
