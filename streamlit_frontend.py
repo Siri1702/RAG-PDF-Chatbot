@@ -26,34 +26,8 @@ if "chat_history" not in st.session_state:
 
 
 question = st.text_input("Ask a question about the PDF:")
-col1, col2 = st.columns([1, 1])
-with col1:
-    ask_stream_btn = st.button("🚀 Ask with Streaming")
-with col2:
-    ask_btn = st.button("💡 Ask (non-streaming)")
-
-if ask_stream_btn:
-    if not question:
-        st.error("Please enter a question.")
-    elif not st.session_state.get("pdf_uploaded", False):
-        st.warning("Please upload and process a PDF first.")
-    else:
-        st.session_state.chat_history.append({"role": "user", "content": question})
-        with st.chat_message("user"):
-            st.markdown(question)
-
-        response = requests.post(f"{API_URL}/ask_question_stream/", json={"question": question}, stream=True)
-        if response.status_code == 200:
-            with st.chat_message("assistant"):
-                    placeholder = st.empty()
-                    answer = ""
-                    for chunk in response.iter_content(chunk_size=1, decode_unicode=True):
-                        answer += chunk
-                        placeholder.markdown(answer.strip())
-            st.session_state.chat_history.append({"role": "assistant", "content": answer.strip()})
-        else:
-            st.error(f"Error querying the PDF: {response.text}")
-elif ask_btn:
+ask_btn = st.button("💡 Ask ")
+if ask_btn:
     if not question:
         st.error("Please enter a question.")
     elif not st.session_state.get("pdf_uploaded", False):
@@ -76,4 +50,5 @@ st.subheader("Chat History")
 for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
+
 
