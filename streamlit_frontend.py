@@ -47,7 +47,7 @@ if ask_stream_btn:
             with st.chat_message("assistant"):
                     placeholder = st.empty()
                     answer = ""
-                    for chunk in response.iter_content(chunk_size=None, decode_unicode=True):
+                    for chunk in response.iter_content(chunk_size=1, decode_unicode=True):
                         answer += chunk
                         placeholder.markdown(answer.strip())
             st.session_state.chat_history.append({"role": "assistant", "content": answer.strip()})
@@ -76,3 +76,4 @@ st.subheader("Chat History")
 for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
+
