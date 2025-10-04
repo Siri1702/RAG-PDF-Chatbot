@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: rag_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SESSIONS_DIR=/app/data/sessions
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ui
+    container_name: rag_ui
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+      - SESSIONS_DIR=/ui/sessions
+    depends_on:
+      - api
+    restart: unless-stopped
