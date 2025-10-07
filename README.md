@@ -2,7 +2,7 @@ RAG-PDF Chatbot
 
 
 An open-source Retrieval-Augmented Generation (RAG) chatbot that lets you chat with PDFs.
-Upload any PDF and get context-aware, token-streamed answers with citations powered by Ollama LLMs, HuggingFace embeddings, and advanced retrieval techniques like multi-query retriever and contextual compression retriever for higher accuracy and reduced hallucination.
+Upload any PDF and get context-aware answers powered by Ollama LLMs, HuggingFace embeddings, and advanced retrieval techniques like multi-query retriever and contextual compression retriever for higher accuracy and reduced hallucination.
 
 ✨ Key Features
 
@@ -12,13 +12,11 @@ Upload any PDF and get context-aware, token-streamed answers with citations powe
 
 ✂️ Contextual Compression Retriever: Compresses context chunks to only keep relevant parts, reducing noise and hallucination.
 
-⚡ Token-Level Streaming: Real-time answer generation, mimicking ChatGPT-style streaming.
-
 📝 Source Citations: Every answer shows page numbers and text snippets from the PDF to maintain transparency.
 
 💾 Session Persistence: Keeps chat history and vector indexes for ongoing conversations.
 
-🎨 Elegant UI: Streamlit-powered interface with sidebar controls (model selection, retriever settings, temperature, etc.).
+🎨 Elegant UI: Streamlit-powered interface.
 
 ⚙️ Backend + Frontend Separation: FastAPI backend (API endpoints) + Streamlit frontend (chat UI).
 
@@ -43,7 +41,6 @@ Context Assembly: Concise and relevant context is passed into the LLM prompt.
 3. Answer Generation
 
 Ollama LLMs (open-source large language models) generate the answer.
-Streaming enabled → tokens appear in real time.
 Retrieved sources (page numbers + text snippets) are shown with the answer.
 
 
