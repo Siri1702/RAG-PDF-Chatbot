@@ -82,9 +82,9 @@ uvicorn app.api:app --host 0.0.0.0 --port 8000 --reload
 streamlit run ui/streamlit_app.py
 
 🔬 Why Multi-Query + Contextual Compression?
-Multi-Query Retriever
+Multi-Query Retriever: 
 Normal retrievers often miss relevant chunks because users phrase queries differently. This retriever paraphrases queries into multiple forms, increasing recall and coverage.
-Contextual Compression Retriever
+Contextual Compression Retriever: 
 Naive retrieval may pass long, irrelevant chunks → bloated prompts and hallucinations.CCR utilizes an LLM to trim chunks down to relevant text only, thereby improving precision and reducing costs.
 
 ✅ Together, they provide better accuracy, fewer hallucinations, and more concise answers than standard RAG setups.
