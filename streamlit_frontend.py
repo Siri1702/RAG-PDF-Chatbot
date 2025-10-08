@@ -45,6 +45,27 @@ if ask_btn:
         else:
             st.error(f"Error querying the PDF: {response.text}")
 
+ask_btn_with_sources = st.button("💡Ask with Sources")
+if ask_btn_with_sources:
+    if not question:
+        st.error("Please enter a question.")
+    elif not st.session_state.get("pdf_uploaded", False):
+        st.warning("Please upload and process a PDF first.")
+    else:
+        st.session_state.chat_history.append({"role": "user", "content": question})
+        with st.chat_message("user"):
+            st.markdown(question)
+        response = requests.post(f"{API_URL}/ask_question/", json={"question": question})
+        if response.status_code == 200:
+            answer = response.json().get("answer")
+            sources = response.json().get("sources")
+            final_answer = answer+"\n\nSources: "+str(sources)
+            st.session_state.chat_history.append({"role": "assistant", "content": final_answer})
+            with st.chat_message("assistant"):
+                    st.markdown(final_answer)
+        else:
+            st.error(f"Error querying the PDF: {response.text}")
+
 
 st.subheader("Chat History")
 for msg in st.session_state.chat_history:
