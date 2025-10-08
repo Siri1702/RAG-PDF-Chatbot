@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import uvicorn
 import os
 import shutil
@@ -24,7 +24,16 @@ from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain_community.chat_models import ChatOllama
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from fastapi.responses import StreamingResponse
+from langchain.chains import RetrievalQA
 import asyncio
+from pydantic import BaseModel
+
+
+class SourceItem(BaseModel):
+    page: Optional[int]
+    source: Optional[str]
+    score: Optional[float]
+    text_snippet: Optional[str]
 
 retriever = None
 qa_chain = None
@@ -90,12 +99,13 @@ def build_chain(vectordb):
     cc_retriever = ContextualCompressionRetriever(
     base_retriever= multi_q,
     base_compressor=compressor)
-    rag_chain = (
-    {"context": cc_retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
-    | (lambda x: str(x))  # Explicitly convert prompt output to string
-    | llm
-    | StrOutputParser())
+    rag_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=cc_retriever,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": prompt}
+    )
 
 
     return rag_chain
@@ -125,7 +135,21 @@ async def ask_question(req: QuestionRequest):
         return {"error": "Please upload a PDF first."}
 
     result = qa_chain.invoke(req.question)
-    return {"answer": result}
+    answer_text = result.get("result") or result.get("answer") or ""
+    source_docs = result.get("source_documents") or result.get("source_documents", [])
+    sources_out: List[SourceItem] = []
+    for idx, d in enumerate(source_docs):
+        md = getattr(d, "metadata", {}) or {}
+        snippet = d.page_content.strip().replace("\n", " ")
+        if len(snippet) > 300:
+            snippet = snippet[:297] + "..."
+        src_item = {
+            "page": md.get("orig_page"),
+            "source": md.get("source"),
+            "text_snippet": snippet
+        }
+        sources_out.append(src_item)
+    return {"answer": answer_text,"sources":sources_out}
 
 @app.post("/ask_question_stream/")
 async def ask_question_stream(req: QuestionRequest):
