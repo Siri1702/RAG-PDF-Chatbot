@@ -76,7 +76,7 @@ cd rag-pdf-chatbot
 pip install -r requirements.txt
 
 3. Run FastAPI backend
-uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
+uvicorn backend:app --reload
 
 4. Run Streamlit frontend
 streamlit run streamlit_frontend.py
